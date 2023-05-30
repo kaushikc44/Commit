@@ -1,0 +1,42 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\ninterface AggregatorV3Interface {\n  function decimals() external view returns (uint8);\n\n  function description() external view returns (string memory);\n\n  function version() external view returns (uint256);\n\n  function getRoundData(uint80 _roundId)\n    external\n    view\n    returns (\n      uint80 roundId,\n      int256 answer,\n      uint256 startedAt,\n      uint256 updatedAt,\n      uint80 answeredInRound\n    );\n\n  function latestRoundData()\n    external\n    view\n    returns (\n      uint80 roundId,\n      int256 answer,\n      uint256 startedAt,\n      uint256 updatedAt,\n      uint80 answeredInRound\n    );\n}\n"
+    },
+    "contracts/commit.sol": {
+      "content": "// SPDX-License-Identifier: MIT\r\npragma solidity  ^0.8.8;\r\nimport \"./PriceConverter.sol\";\r\nimport \"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\";\r\n\r\ncontract Comitment{\r\n\r\n    using PriceConverter for uint256;\r\n    uint256 public deployedDate;\r\n\r\n    uint256 constant MINIMUM_COMIT = 50 * 1e18;\r\n\r\n    struct  Fund{\r\n        string NameOfcomit;\r\n        string reason;\r\n        uint256 amount;\r\n\r\n    }\r\n\r\n    Fund [] public finding;\r\n\r\n    address public immutable owner;\r\n    uint256 public release;\r\n    AggregatorV3Interface public priceFeed;\r\n\r\n    constructor(address priceFeedAddress){\r\n        deployedDate = block.timestamp; \r\n        release = deployedDate + 600;\r\n        owner = msg.sender;\r\n        priceFeed = AggregatorV3Interface(priceFeedAddress);\r\n    }\r\n\r\n    \r\n\r\n    function funding(string memory name , string memory reasoning )public payable {\r\n        require(msg.value.getConvertedPrice(priceFeed) >= MINIMUM_COMIT,\"Comit Requires higher amount\");\r\n        finding.push(Fund(name,reasoning,msg.value));\r\n    }\r\n\r\n   function blocktime() public  view returns(uint256 time){\r\n       return(block.timestamp);\r\n   }\r\n\r\n    function withdraw() public only_owner {\r\n        require(block.timestamp >= release ,\"Time hasn't reached yet\");\r\n        payable(msg.sender).transfer(address(this).balance);\r\n    \r\n\r\n    }\r\n\r\n\r\n     modifier  only_owner{\r\n        require(msg.sender == owner,\"Not owner\");\r\n        _;\r\n    }\r\n\r\n}"
+    },
+    "contracts/PriceConverter.sol": {
+      "content": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity  ^0.8.8;\r\n\r\nimport \"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\";\r\nlibrary PriceConverter {\r\n\r\n      function getPrice(AggregatorV3Interface price) internal view returns (uint256){\r\n        //ABI\r\n        //ADDRESS 0x694AA1769357215DE4FAC081bf1f309aDC325306\r\n        //  AggregatorV3Interface price =  AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);\r\n         (,int256 liveprice,,,) = price.latestRoundData();\r\n         return uint256(liveprice *  10000000000);\r\n       \r\n    }\r\n\r\n    // function getVersion () internal view  returns (uint256){\r\n    //     AggregatorV3Interface version =  AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);\r\n    //     return version.version();\r\n    // }\r\n\r\n    function getConvertedPrice(uint256 ethAmount,AggregatorV3Interface priceFeed) internal view returns (uint256){\r\n        uint256 ethPrice = getPrice(priceFeed);\r\n        uint256 ethAmountInUSD = (ethPrice * ethAmount) / 1000000000000000000;\r\n        return ethAmountInUSD;\r\n    }\r\n\r\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates",
+          "storageLayout"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "commit",
+  "version": "1.0.0",
+  "description": "To commit ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.14.0",
+    "install": "^0.13.0",
+    "npm": "^9.6.7"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^0.6.1",
+    "hardhat-contract-sizer": "^2.9.0",
+    "hardhat-deploy": "^0.11.30",
+    "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-storage-layout": "^0.1.7"
+  }
+}
